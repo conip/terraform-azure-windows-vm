@@ -84,34 +84,25 @@ resource "azurerm_network_interface_security_group_association" "nsg" {
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
-
 #------------------
-resource "azurerm_linux_virtual_machine" "instance" {
-  name                  = "${var.name}-srv"
-  location              = var.region
-  resource_group_name   = var.rg
-  size                = var.instance_size
-  admin_username      = "ubuntu"
+resource "azurerm_windows_virtual_machine" "example" {
+  name                = "${var.name}"
+  resource_group_name = var.rg
+  location            = var.region
+  size                = "Standard_F2"
+  admin_username      = "adminuser"
+  admin_password      = var.win_password
   network_interface_ids = [azurerm_network_interface.nic.id]
 
-  admin_ssh_key {
-    username   = "ubuntu"
-      public_key = var.ssh_key
-    
-  }
-
   os_disk {
-    name              = "${var.name}-disk"
-    caching           = "ReadWrite"
+    caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
     version   = "latest"
   }
 }
-
-#------------------
