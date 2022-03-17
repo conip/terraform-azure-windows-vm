@@ -50,4 +50,5 @@ variable "win_password" {
   type = string
   default = "Password!@#"
   sensitive = true
+  
 }
