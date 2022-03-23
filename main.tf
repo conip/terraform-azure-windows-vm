@@ -106,3 +106,19 @@ resource "azurerm_windows_virtual_machine" "example" {
     version   = "latest"
   }
 }
+
+resource "azurerm_virtual_machine_extension" "cloudinit" {
+  name                 = "cloudinit"
+  virtual_machine_id   = azurerm_windows_virtual_machine.example.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+  settings             = <<SETTINGS
+    {
+        "commandToExecute": "netsh advfirewall firewall add rule name=\"ICMP Allow incoming V4 echo request\" protocol=icmpv4:8,any dir=in action=allow"
+    }
+    SETTINGS
+  depends_on = [
+    azurerm_windows_virtual_machine.example
+  ]
+}
